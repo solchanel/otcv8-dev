@@ -1,29 +1,30 @@
-find_package(PkgConfig)
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(PC_LIBZIP QUIET libzip)
 
+# Headers
 find_path(LIBZIP_INCLUDE_DIR_ZIP
     NAMES zip.h
-    HINTS ${PC_LIBZIP_INCLUDE_DIRS})
+    HINTS ${PC_LIBZIP_INCLUDE_DIRS}
+    PATHS /usr/include
+)
 
 find_path(LIBZIP_INCLUDE_DIR_ZIPCONF
     NAMES zipconf.h
-    HINTS ${PC_LIBZIP_INCLUDE_DIRS})
+    HINTS ${PC_LIBZIP_INCLUDE_DIRS}
+    PATHS /usr/include
+)
 
+# Library
 find_library(LIBZIP_LIBRARY
-    NAMES zip)
+    NAMES zip
+    HINTS ${PC_LIBZIP_LIBRARY_DIRS}
+    PATHS /usr/lib/aarch64-linux-gnu /usr/lib /usr/local/lib
+)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(
+find_package_handle_standard_args(
     LIBZIP DEFAULT_MSG
-    LIBZIP_LIBRARY LIBZIP_INCLUDE_DIR_ZIP LIBZIP_INCLUDE_DIR_ZIPCONF)
+    LIBZIP_LIBRARY LIBZIP_INCLUDE_DIR_ZIP LIBZIP_INCLUDE_DIR_ZIPCONF
+)
 
-set(LIBZIP_VERSION 0)
-
-if (LIBZIP_INCLUDE_DIR_ZIPCONF)
-  FILE(READ "${LIBZIP_INCLUDE_DIR_ZIPCONF}/zipconf.h" _LIBZIP_VERSION_CONTENTS)
-  if (_LIBZIP_VERSION_CONTENTS)
-    STRING(REGEX REPLACE ".*#define LIBZIP_VERSION \"([0-9.]+)\".*" "\\1" LIBZIP_VERSION "${_LIBZIP_VERSION_CONTENTS}")
-  endif ()
-endif ()
-
-set(LIBZIP_VERSION ${LIBZIP_VERSION} CACHE STRING "Version number of libzip")
+mark_as_advanced(LIBZIP_LIBRARY LIBZIP_INCLUDE_DIR_ZIP LIBZIP_INCLUDE_DIR_ZIPCONF)

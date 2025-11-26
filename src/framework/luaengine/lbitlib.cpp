@@ -44,6 +44,8 @@ extern "C" {
 #endif
 }
 
+#include <climits>
+
 /* ----- adapted from lua-5.2.0 luaconf.h: ----- */
 
 /*

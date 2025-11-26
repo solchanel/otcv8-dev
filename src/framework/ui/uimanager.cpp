@@ -288,6 +288,11 @@ void UIManager::onWidgetDisappear(const UIWidgetPtr& widget)
 
 void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
 {
+	if (!widget) {
+        g_logger.error("Received null widget in UIManager::onWidgetDestroy");
+        return;
+    }
+	
     AutoStat s(STATS_MAIN, "UIManager::onWidgetDestroy", stdext::format("%s (%s)", widget->getId(), widget->getParent() ? widget->getParent()->getId() : ""));
 
     // release input grabs

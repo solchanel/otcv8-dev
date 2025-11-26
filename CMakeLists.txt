@@ -12,6 +12,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+add_compile_options(-w)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
+
 option(FRAMEWORK_SOUND "Use SOUND " OFF)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
 option(FRAMEWORK_XML "Use XML " ON)

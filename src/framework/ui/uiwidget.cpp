@@ -815,6 +815,9 @@ void UIWidget::bindRectToParent()
 
 void UIWidget::internalDestroy()
 {
+	if (isDestroyed())
+        return;
+	
     if (!getText().empty()) {
         setText("", true);
     }
@@ -830,11 +833,16 @@ void UIWidget::internalDestroy()
     m_parent = nullptr;
     m_lockedChildren.clear();
 
-    for(const UIWidgetPtr& child : m_children)
-        child->internalDestroy();
+    for (const auto& child : m_children) {
+        if (child) {
+            child->internalDestroy();
+        }
+    }
     m_children.clear();
 
-    callLuaField("onDestroy");
+    if (!isDestroyed()) {
+        callLuaField("onDestroy");
+    }
 
     releaseLuaFieldsTable();
 
@@ -843,16 +851,19 @@ void UIWidget::internalDestroy()
 
 void UIWidget::destroy()
 {
-    if(m_destroyed)
-        g_logger.warning(stdext::format("attempt to destroy widget '%s' two times", m_id));
+    if (m_destroyed) {
+        g_logger.warning(stdext::format("Attempt to destroy widget '%s' two times", m_id));
+        return;
+    }
 
-    // hold itself reference
-    UIWidgetPtr self = static_self_cast<UIWidget>();
     m_destroyed = true;
 
-    // remove itself from parent
-    if(UIWidgetPtr parent = getParent())
+    UIWidgetPtr self = static_self_cast<UIWidget>();
+
+    if (UIWidgetPtr parent = getParent()) {
         parent->removeChild(self);
+    }
+
     internalDestroy();
 }
 

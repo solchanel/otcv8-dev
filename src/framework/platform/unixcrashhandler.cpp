@@ -52,7 +52,8 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss.flags(std::ios::hex | std::ios::showbase);
 
     ucontext_t context = *(ucontext_t*)secret;
-#if __WORDSIZE == 64
+
+#if defined(__x86_64__)
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
     ss << "     rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;
@@ -64,7 +65,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
     ss << std::endl;
-#elif defined(REG_EIP)
+#elif defined(__i386__) && defined(REG_EIP)
     ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
     ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
     ss << "     ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
@@ -75,6 +76,15 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
     ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
+    ss << std::endl;
+#elif defined(__aarch64__)
+    auto& mctx = context.uc_mcontext;
+    ss << "  PC  = " << mctx.pc << std::endl;
+    ss << "  SP  = " << mctx.sp << std::endl;
+    ss << "  PSTATE = " << mctx.pstate << std::endl;
+    for (int i = 0; i < 31; i++) {
+        ss << "  X" << i << " = " << mctx.regs[i] << std::endl;
+    }
     ss << std::endl;
 #endif
 
@@ -137,7 +147,6 @@ void installCrashHandler()
 
 void uninstallCrashHandler()
 {
-    
 }
 
 #endif

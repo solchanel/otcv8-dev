@@ -146,7 +146,7 @@ bool Platform::openDir(std::string path, bool now)
 std::string Platform::getCPUName()
 {
     std::string line;
-    std::ifstream in("/proc/cpuinfo");
+    std::ifstream in("cat /proc/cpuinfo");
     while(getline(in, line)) {
         auto strs = stdext::split(line, ":");
         std::string first = strs[0];
@@ -162,7 +162,7 @@ std::string Platform::getCPUName()
 double Platform::getTotalSystemMemory()
 {
     std::string line;
-    std::ifstream in("/proc/meminfo");
+    std::ifstream in("cat /proc/meminfo");
     while(getline(in, line)) {
         auto strs = stdext::split(line, ":");
         std::string first = strs[0];
@@ -183,7 +183,7 @@ double Platform::getMemoryUsage()
 std::string Platform::getOSName()
 {
     std::string line;
-    std::ifstream in("/etc/issue");
+    std::ifstream in("cat /etc/issue");
     if(getline(in, line)) {
         std::size_t end = line.find('\\');
         std::string res = line.substr(0, end);

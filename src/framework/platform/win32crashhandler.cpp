@@ -44,6 +44,8 @@
 
 #endif
 
+#include <sys/ucontext.h>
+
 bool quiet_crash = false;
 
 const char *getExceptionName(DWORD exceptionCode)
